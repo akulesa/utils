@@ -4,6 +4,9 @@ from collections import OrderedDict
 from itertools import product
 from os import path
 
+def fix_null_codes(s):
+    return s.replace('\x00','')
+
 def fix_string_to_num(s):
     return float(s.replace('\x00',''))
 
@@ -19,9 +22,9 @@ def read_plate(fname,start=3,end=-3,format='wrapped'):
             for i,t in enumerate(f.readlines()[start:end]):
                 if i == 0:
                     # Remove the temperature at the front
-                    agg.append(np.asarray([fix_string_to_num(s) for s in t.split()][1:]))
+                    agg.append(np.asarray([float(s) for s in fix_null_codes(t).split()][1:]))
                 else:
-                    agg.append(np.asarray([fix_string_to_num(s) for s in t.split()]))
+                    agg.append(np.asarray([float(s) for s in fix_null_codes(t).split()]))
 
             agg = pd.DataFrame(np.vstack(agg))
 
